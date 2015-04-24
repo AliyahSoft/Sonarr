@@ -6,9 +6,11 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.Indexers;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles;
 using NzbDrone.Core.Qualities;
 
@@ -154,6 +156,13 @@ namespace NzbDrone.Core.History
                 if (!message.Episode.ParsedEpisodeInfo.ReleaseHash.IsNullOrWhiteSpace())
                 {
                     history.Data.Add("ReleaseHash", message.Episode.ParsedEpisodeInfo.ReleaseHash);
+                }
+
+                var torrentRelease = message.Episode.Release as TorrentInfo;
+
+                if (torrentRelease != null)
+                {
+                    history.Data.Add("TorrentInfoHash", torrentRelease.InfoHash);
                 }
 
                 _historyRepository.Insert(history);
